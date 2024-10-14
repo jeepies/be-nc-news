@@ -1,4 +1,5 @@
 const db = require("../../db/connection");
+const format = require("pg-format");
 
 exports.fetchByID = (id) => {
   return db
@@ -29,4 +30,12 @@ exports.fetchCommentsByID = (id) => {
   return db
     .query(`SELECT * FROM comments WHERE article_id = $1`, [id])
     .then((data) => data.rows);
+};
+
+exports.addCommentByID = (id, payload) => {
+  const query = format(
+    `INSERT INTO comments (article_id, author, body) VALUES (%L, %L, %L) RETURNING *`,
+    id, payload.username, payload.body
+  );
+  return db.query(query).then((data) => data.rows[0]);
 };

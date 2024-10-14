@@ -152,3 +152,43 @@ describe("GET /api/articles/:id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:id/comments", () => {
+  it("should add a new comment, and return it", () => {
+    const comment = {
+      username: "icellusedkars",
+      body: "i'm a commenter :3",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(comment)
+      .expect(200)
+      .then(
+        ({
+          body: { comment_id, body, article_id, author, votes, created_at },
+        }) => {
+          expect(author).toBe(comment.username);
+          expect(body).toBe(comment.body);
+          expect(article_id).toBe(1);
+          expect(typeof comment_id).toBe("number");
+          expect(votes).toBe(0);
+          expect(typeof created_at).toBe("string");
+        }
+      );
+  });
+  it("should return appropriately when given a bad comment", () => {
+    const comment = {
+      username: 1,
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(comment)
+      .expect(400)
+      .then(({ body: { data } }) => {
+        expect(data).toEqual([
+          "username is invalid type - expected string, got number",
+          "body does not exist on payload",
+        ]);
+      });
+  });
+});
