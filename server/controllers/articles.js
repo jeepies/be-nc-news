@@ -1,3 +1,5 @@
+const res = require("express/lib/response");
+
 const model = require("../models").articles;
 
 exports.getByID = (request, response, next) => {
@@ -6,8 +8,17 @@ exports.getByID = (request, response, next) => {
     .fetchByID(id)
     .then((data) => {
       if (data.rows.length === 0)
-        return response.status(404).json({ message: "ID does not exist" });
-      else response.status(200).json(data.rows[0])
+        response.status(404).json({ message: "ID does not exist" });
+      else response.status(200).json(data.rows[0]);
+    })
+    .catch((err) => next(err));
+};
+
+exports.getAll = (request, response, next) => {
+  model
+    .fetchAll()
+    .then((data) => {
+      response.status(200).json({ articles: data });
     })
     .catch((err) => next(err));
 };

@@ -7,6 +7,7 @@ const app = express();
 app.get("/api", controllers.api.index);
 app.get("/api/topics", controllers.topics.getAll);
 app.get("/api/articles/:id", controllers.articles.getByID);
+app.get("/api/articles", controllers.articles.getAll);
 
 app.use((err, request, response, next) => {
   const PSQL_ERR_CODES = ["42P02", "22P02"];
@@ -15,8 +16,9 @@ app.use((err, request, response, next) => {
   next();
 });
 
-app.use((err, request, response, next) =>
-  response.status(500).send({ message: "Internal Server Error" })
-);
+app.use((err, request, response, next) => {
+  console.log(err);
+  response.status(500).send({ message: "Internal Server Error" });
+});
 
 module.exports = app;
