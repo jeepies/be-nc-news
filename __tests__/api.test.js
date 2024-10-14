@@ -48,14 +48,14 @@ describe("GET /api/articles/:id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.author).not.toBe(undefined);
-        expect(body.title).not.toBe(undefined);
-        expect(body.article_id).not.toBe(undefined);
-        expect(body.body).not.toBe(undefined);
-        expect(body.topic).not.toBe(undefined);
-        expect(body.created_at).not.toBe(undefined);
-        expect(body.votes).not.toBe(undefined);
-        expect(body.article_img_url).not.toBe(undefined);
+        expect(body.author).toBe("butter_bridge");
+        expect(body.title).toBe("Living in the shadow of a great man");
+        expect(body.article_id).toBe(1);
+        expect(body.body).toBe("I find this existence challenging");
+        expect(body.topic).toBe("mitch");
+        expect(body.created_at).toBe("2020-07-09T20:11:00.000Z");
+        expect(body.votes).toBe(100);
+        expect(body.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
       });
   });
   it("should return appropriately when given a valid ID that does not exist", () => {
