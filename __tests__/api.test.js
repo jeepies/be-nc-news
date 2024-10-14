@@ -189,7 +189,7 @@ describe("POST /api/articles/:id/comments", () => {
         }
       );
   });
-  it("should return appropriately when given a bad comment", () => {
+  it("should return appropriately when given an invalid comment", () => {
     const comment = {
       username: 1,
     };
