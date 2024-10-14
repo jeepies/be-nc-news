@@ -1,7 +1,7 @@
 {
   "Controller Fn Basic": {
     "prefix": "fcb",
-    "body": ["exports.$0 = (request, response) => {", "", "}"]
+    "body": ["exports.$0 = (request, response, next) => {", "", "}"]
   },
   "Model Fn Basic": {
     "prefix": "fmb",
@@ -19,6 +19,6 @@
   },
   "Controller": {
     "prefix": "controller",
-    "body": ["const model = require(\"../models\").$TM_FILENAME_BASE;","","exports.$0 = (request, response) => {", "", "}"]
+    "body": ["const model = require(\"../models\").$TM_FILENAME_BASE;","","exports.$0 = (request, response, next) => {", "", "}"]
   }
 }
