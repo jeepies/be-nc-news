@@ -13,6 +13,7 @@ app.get("/api/articles", controllers.articles.getAll);
 app.get("/api/articles/:id/comments", controllers.articles.getCommentsByID);
 app.post("/api/articles/:id/comments", controllers.articles.addComment);
 app.patch("/api/articles/:id", controllers.articles.updateArticle);
+app.delete("/api/comments/:id", controllers.comments.delete);
 
 app.use((err, request, response, next) => {
   const PSQL_ERR_CODES = ["42P02", "22P02"];

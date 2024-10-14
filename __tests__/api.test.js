@@ -249,3 +249,17 @@ describe("PATCH: /api/articles/:id", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:id", () => {
+  it("should delete a comment", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  it("should return appropriately when deleting a non-existent comment", () => {
+    return request(app)
+      .delete("/api/comments/999999")
+      .expect(404)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Comment not found");
+      });
+  });
+});
