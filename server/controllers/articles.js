@@ -82,5 +82,5 @@ exports.updateArticle = (request, response, next) => {
         return response.status(404).json({ message: "Article not found" });
       response.status(200).json(data);
     })
-    .then((err) => next(err));
+    .catch((err) => next(err));
 };

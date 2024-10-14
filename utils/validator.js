@@ -13,11 +13,7 @@ exports.validator = (payload, schema) => {
     if (!payload[key])
       return result.errors.push(`${key} does not exist on payload`);
     if (typeof payload[key] !== schema[key])
-      return result.errors.push(
-        `${key} is invalid type - expected ${schema[key]}, got ${typeof payload[
-          key
-        ]}`
-      );
+      return result.errors.push(`${key} is invalid type - expected ${schema[key]}, got ${typeof payload[key]}`);
   });
   if (result.errors.length !== 0) result.success = false;
   return result;
