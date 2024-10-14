@@ -19,6 +19,22 @@
   },
   "Controller": {
     "prefix": "controller",
-    "body": ["const model = require(\"../models\").$TM_FILENAME_BASE;","","exports.$0 = (request, response, next) => {", "", "}"]
+    "body": [
+      "const model = require(\"../models\").$TM_FILENAME_BASE;",
+      "",
+      "exports.$0 = (request, response, next) => {",
+      "",
+      "}"
+    ]
+  },
+  "Route Test": {
+    "prefix": "tr",
+    "body": [
+      "describe(\"$1 /api/$2\", () => {",
+      "  it(\"should $3\", () => {",
+      "    return request(app)$0;",
+      "  });",
+      "});"
+    ]
   }
 }
