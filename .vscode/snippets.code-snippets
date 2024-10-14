@@ -1,0 +1,10 @@
+{
+  "Controller Basic": {
+    "prefix": "cb",
+    "body": ["exports.$0 = (request, response) => {", "", "}"]
+  },
+  "Model Basic": {
+    "prefix": "mb",
+    "body": ["exports.$0 = () => {", "", "}"]
+  }
+}
