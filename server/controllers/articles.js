@@ -52,7 +52,35 @@ exports.addComment = (request, response, next) => {
 
   const { id } = request.params;
 
-  model.addCommentByID(id, payload).then((data) => {
-    response.status(200).json(data);
-  }).then((err) => next(err));
+  model
+    .addCommentByID(id, payload)
+    .then((data) => {
+      response.status(200).json(data);
+    })
+    .then((err) => next(err));
+};
+
+exports.updateArticle = (request, response, next) => {
+  const schema = {
+    inc_votes: "number",
+  };
+
+  const payload = request.body;
+  const result = validator(payload, schema);
+
+  if (!result.success)
+    return response
+      .status(400)
+      .json({ message: "Invalid body", data: result.errors });
+
+  const { id } = request.params;
+
+  model
+    .update(id, payload)
+    .then((data) => {
+      if (!data)
+        return response.status(404).json({ message: "Article not found" });
+      response.status(200).json(data);
+    })
+    .then((err) => next(err));
 };

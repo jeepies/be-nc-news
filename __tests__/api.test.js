@@ -49,18 +49,31 @@ describe("GET /api/articles/:id", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
-      .then(({ body: { author, title, article_id, body, topic, created_at, votes, article_img_url} }) => {
-        expect(author).toBe("butter_bridge");
-        expect(title).toBe("Living in the shadow of a great man");
-        expect(article_id).toBe(1);
-        expect(body).toBe("I find this existence challenging");
-        expect(topic).toBe("mitch");
-        expect(created_at).toBe("2020-07-09T20:11:00.000Z");
-        expect(votes).toBe(100);
-        expect(article_img_url).toBe(
-          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-        );
-      });
+      .then(
+        ({
+          body: {
+            author,
+            title,
+            article_id,
+            body,
+            topic,
+            created_at,
+            votes,
+            article_img_url,
+          },
+        }) => {
+          expect(author).toBe("butter_bridge");
+          expect(title).toBe("Living in the shadow of a great man");
+          expect(article_id).toBe(1);
+          expect(body).toBe("I find this existence challenging");
+          expect(topic).toBe("mitch");
+          expect(created_at).toBe("2020-07-09T20:11:00.000Z");
+          expect(votes).toBe(100);
+          expect(article_img_url).toBe(
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+          );
+        }
+      );
   });
   it("should return appropriately when given a valid ID that does not exist", () => {
     return request(app)
@@ -189,6 +202,50 @@ describe("POST /api/articles/:id/comments", () => {
           "username is invalid type - expected string, got number",
           "body does not exist on payload",
         ]);
+      });
+  });
+});
+
+describe("PATCH: /api/articles/:id", () => {
+  it("should update an article and return the updated article", () => {
+    const update = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(update)
+      .expect(200)
+      .then(({ body: { votes } }) => {
+        expect(votes).toBe(101);
+      });
+  });
+  it("should update an article and return the updated article", () => {
+    const update = { inc_votes: -205 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(update)
+      .expect(200)
+      .then(({ body: { votes } }) => {
+        expect(votes).toBe(-105);
+      });
+  });
+  it("should return appropriately when passed in invalid data", () => {
+    const update = {};
+    return request(app)
+      .patch("/api/articles/1")
+      .send(update)
+      .expect(400)
+      .then(({ body: { message, data } }) => {
+        expect(message).toBe("Invalid body");
+        expect(data).toEqual(["inc_votes does not exist on payload"]);
+      });
+  });
+  it("should return appropriately when passed in an invalid article", () => {
+    const update = { inc_votes: 12 };
+    return request(app)
+      .patch("/api/articles/999")
+      .send(update)
+      .expect(404)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Article not found");
       });
   });
 });
