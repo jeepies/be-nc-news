@@ -1,5 +1,6 @@
 const request = require("supertest");
-const { app, server } = require("../index");
+const app = require("../app");
+const server = require("../server")
 
 const connection = require("../db/connection");
 const seed = require("../db/seeds/seed");
@@ -32,6 +33,7 @@ describe("GET: /api/topics", () => {
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body.topics)).toBe(true);
+        expect(body.topics.length).toEqual(3);
         body.topics.forEach((topic) => {
           expect(topic.slug).not.toBe(undefined);
           expect(topic.description).not.toBe(undefined);
