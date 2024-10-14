@@ -35,7 +35,18 @@ exports.fetchCommentsByID = (id) => {
 exports.addCommentByID = (id, payload) => {
   const query = format(
     `INSERT INTO comments (article_id, author, body) VALUES (%L, %L, %L) RETURNING *`,
-    id, payload.username, payload.body
+    id,
+    payload.username,
+    payload.body
+  );
+  return db.query(query).then((data) => data.rows[0]);
+};
+
+exports.update = (id, payload) => {
+  const query = format(
+    `UPDATE articles SET votes = votes + %L WHERE article_id = %L RETURNING *`,
+    payload.inc_votes,
+    id
   );
   return db.query(query).then((data) => data.rows[0]);
 };
