@@ -89,7 +89,7 @@ describe("GET /api/articles", () => {
         const articles = body.articles;
         expect(Array.isArray(articles)).toBe(true);
         expect(articles.length).toBe(13);
-        expect(articles).toBeSortedBy('created_at', { descending: true })
+        expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
           expect(typeof article.article_id).toBe("number");
           expect(typeof article.title).toBe("string");
@@ -101,6 +101,54 @@ describe("GET /api/articles", () => {
           expect(typeof article.comment_count).toBe("number");
           expect(typeof article.body).toBe("undefined");
         });
+      });
+  });
+});
+
+describe("GET /api/articles/:id/comments", () => {
+  it("should return all comments from article", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.comments)).toBe(true);
+        expect(body.comments.length).toBe(11);
+        body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.article_id).toBe("number");
+        });
+      });
+  });
+  it("should return appropriately when given a non-existent article", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe(
+          "This article has no comments, or does not exist"
+        );
+      });
+  });
+  it("should return appropriately when given an article with no comments", () => {
+    return request(app)
+      .get("/api/articles/8/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe(
+          "This article has no comments, or does not exist"
+        );
+      });
+  });
+  it("should return appropriately hen given an invalid query parameter", () => {
+    return request(app)
+      .get("/api/articles/id/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad Request");
       });
   });
 });

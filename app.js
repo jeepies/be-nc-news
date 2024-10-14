@@ -8,6 +8,7 @@ app.get("/api", controllers.api.index);
 app.get("/api/topics", controllers.topics.getAll);
 app.get("/api/articles/:id", controllers.articles.getByID);
 app.get("/api/articles", controllers.articles.getAll);
+app.get("/api/articles/:id/comments", controllers.articles.getCommentsByID);
 
 app.use((err, request, response, next) => {
   const PSQL_ERR_CODES = ["42P02", "22P02"];

@@ -24,3 +24,9 @@ exports.fetchAll = () => {
     )
     .then((data) => data.rows);
 };
+
+exports.fetchCommentsByID = (id) => {
+  return db
+    .query(`SELECT * FROM comments WHERE article_id = $1`, [id])
+    .then((data) => data.rows);
+};
