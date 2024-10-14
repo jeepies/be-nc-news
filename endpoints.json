@@ -47,5 +47,13 @@
     "exampleResponse": {
       "comments": []
     }
+  },
+  "POST /api/articles/:id/comments": {
+    "description": "add a new comment to an article",
+    "payload": { "username": "string", "body": "string" },
+    "exampleResponse": {
+      "username": "jay",
+      "body": "this is a comment! :3"
+    }
   }
 }
