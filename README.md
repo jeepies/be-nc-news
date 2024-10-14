@@ -1,8 +1,6 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
-
-
+In order to run this application, please create a .env at the root of the project, following the examples in `.env-example`
 
 --- 
 
