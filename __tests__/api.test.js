@@ -189,7 +189,7 @@ describe("POST /api/articles/:id/comments", () => {
         }
       );
   });
-  it("should return appropriately when given a bad comment", () => {
+  it("should return appropriately when given an invalid comment", () => {
     const comment = {
       username: 1,
     };
@@ -248,6 +248,16 @@ describe("PATCH: /api/articles/:id", () => {
         expect(message).toBe("Article not found");
       });
   });
+  it("should return appropriately when passed in an invalid article", () => {
+    const update = { inc_votes: 12 };
+    return request(app)
+      .patch("/api/articles/id")
+      .send(update)
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Bad Request");
+      });
+  });
 });
 
 describe("DELETE /api/comments/:id", () => {
@@ -262,6 +272,14 @@ describe("DELETE /api/comments/:id", () => {
         expect(message).toBe("Comment not found");
       });
   });
+  it("should return appropriately when passed a non-numeric id", () => {
+    return request(app)
+      .delete("/api/comments/comment")
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Bad Request");
+      });
+  });
 });
 
 describe("GET /api/users", () => {
@@ -273,7 +291,6 @@ describe("GET /api/users", () => {
         expect(Array.isArray(users)).toBe(true);
         expect(users.length).toBe(4);
         users.forEach((user) => {
-          console.log(user)
           expect(typeof user.username).toBe("string");
           expect(typeof user.name).toBe("string");
           expect(typeof user.avatar_url).toBe("string");

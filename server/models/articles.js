@@ -33,13 +33,12 @@ exports.fetchCommentsByID = (id) => {
 };
 
 exports.addCommentByID = (id, payload) => {
-  const query = format(
-    `INSERT INTO comments (article_id, author, body) VALUES (%L, %L, %L) RETURNING *`,
-    id,
-    payload.username,
-    payload.body
-  );
-  return db.query(query).then((data) => data.rows[0]);
+  return db
+    .query(
+      `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING *`,
+      [id, payload.username, payload.body]
+    )
+    .then((data) => data.rows[0]);
 };
 
 exports.update = (id, payload) => {
