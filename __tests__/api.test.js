@@ -263,3 +263,21 @@ describe("DELETE /api/comments/:id", () => {
       });
   });
 });
+
+describe("GET /api/users", () => {
+  it("should return an array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        expect(Array.isArray(users)).toBe(true);
+        expect(users.length).toBe(4);
+        users.forEach((user) => {
+          console.log(user)
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(typeof user.avatar_url).toBe("string");
+        });
+      });
+  });
+});
