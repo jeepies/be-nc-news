@@ -4,6 +4,8 @@ const {
   formatComments,
 } = require("../db/seeds/utils");
 
+const { validator } = require("../utils/validator");
+
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
     const timestamp = 1557572706232;
@@ -100,5 +102,38 @@ describe("formatComments", () => {
     const comments = [{ created_at: timestamp }];
     const formattedComments = formatComments(comments, {});
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
+  });
+});
+
+describe("validator", () => {
+  const schema = {
+    username: "string",
+    body: "string",
+  };
+  it("should return an object detailing validation on success", () => {
+    const payload = {
+      username: "jay",
+      body: "test",
+    };
+    const result = validator(payload, schema);
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+  it("should return an object detailing validation on failure", () => {
+    const payload = {
+      username: "jay",
+    };
+    const payload2 = {
+      username: 2,
+      body: "test",
+    };
+    const result = validator(payload, schema);
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual(["body does not exist on payload"]);
+    const result2 = validator(payload2, schema);
+    expect(result2.success).toBe(false);
+    expect(result2.errors).toEqual([
+      "username is invalid type - expected string, got number",
+    ]);
   });
 });
