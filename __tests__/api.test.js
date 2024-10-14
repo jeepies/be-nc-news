@@ -272,6 +272,14 @@ describe("DELETE /api/comments/:id", () => {
         expect(message).toBe("Comment not found");
       });
   });
+  it("should return appropriately when passed a non-numeric id", () => {
+    return request(app)
+      .delete("/api/comments/comment")
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Bad Request");
+      });
+  });
 });
 
 describe("GET /api/users", () => {
