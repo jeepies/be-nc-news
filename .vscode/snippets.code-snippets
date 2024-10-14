@@ -1,10 +1,24 @@
 {
-  "Controller Basic": {
-    "prefix": "cb",
+  "Controller Fn Basic": {
+    "prefix": "fcb",
     "body": ["exports.$0 = (request, response) => {", "", "}"]
   },
-  "Model Basic": {
-    "prefix": "mb",
+  "Model Fn Basic": {
+    "prefix": "fmb",
     "body": ["exports.$0 = () => {", "", "}"]
+  },
+  "Model": {
+    "prefix": "model",
+    "body": [
+      "const db = require(\"../../db/connection\");",
+      "",
+      "exports.$0 = () => {",
+      "",
+      "}"
+    ]
+  },
+  "Controller": {
+    "prefix": "controller",
+    "body": ["const model = require(\"../models\").$TM_FILENAME_BASE;","","exports.$0 = (request, response) => {", "", "}"]
   }
 }
