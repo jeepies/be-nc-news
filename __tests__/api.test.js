@@ -496,3 +496,105 @@ describe("PATCH /api/comments/:id", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  const desiredObject = {
+    title: expect.toBeString(),
+    topic: expect.toBeString(),
+    author: expect.toBeString(),
+    body: expect.toBeString(),
+    article_img_url: expect.toBeString(),
+
+    article_id: expect.toBeNumber(),
+    created_at: expect.toBeString(),
+    votes: expect.toBeNumber(),
+    comment_count: expect.toBeNumber(),
+  };
+
+  it("200: should create a new article and return the created article", () => {
+    const payload = {
+      author: "rogersop",
+      title: "why does paper taste yummy?",
+      body: "om nom nom... mpfh so full...",
+      topic: "paper",
+      article_img_url:
+        "https://avatars.githubusercontent.com/u/109990582?s=400&u=d1b7859a777e02ea8feceb79d90765e7bd50944c&v=4",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(payload)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toMatchObject(desiredObject);
+      });
+  });
+  it("200: should create a new article and return it when not passed article_img_url", () => {
+    const payload = {
+      author: "rogersop",
+      title: "why does paper taste yummy?",
+      body: "om nom nom... mpfh so full...",
+      topic: "paper",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(payload)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toMatchObject(desiredObject);
+      });
+  });
+  it("404: should return when passed an invalid username", () => {
+    const payload = {
+      author: "jay",
+      title: "why does paper taste yummy?",
+      body: "om nom nom... mpfh so full...",
+      topic: "paper",
+      article_img_url:
+        "https://avatars.githubusercontent.com/u/109990582?s=400&u=d1b7859a777e02ea8feceb79d90765e7bd50944c&v=4",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(payload)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("User not found");
+      });
+  });
+  it("404: should return when passed an invalid username", () => {
+    const payload = {
+      author: "rogersop",
+      title: "why does paper taste yummy?",
+      body: "om nom nom... mpfh so full...",
+      topic: "rust",
+      article_img_url:
+        "https://avatars.githubusercontent.com/u/109990582?s=400&u=d1b7859a777e02ea8feceb79d90765e7bd50944c&v=4",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(payload)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Topic not found");
+      });
+  });
+  it("400: should return when passed an invalid body", () => {
+    const payload = {
+      author: 1,
+      title: 5,
+      body: true,
+      topic: "rust",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(payload)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid body");
+        expect(body.errors).toEqual([
+          "author is invalid type - expected string, got number",
+          "title is invalid type - expected string, got number",
+          "body is invalid type - expected string, got boolean",
+        ]);
+      });
+  });
+});
