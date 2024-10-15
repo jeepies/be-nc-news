@@ -444,3 +444,55 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+describe("PATCH /api/comments/:id", () => {
+  it("200: should return the updated comment object", () => {
+    const payload = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(payload)
+      .expect(200)
+      .then(({ body }) => {
+        const desiredObject = {
+          comment_id: expect.toBeNumber(),
+          body: expect.toBeString(),
+          article_id: expect.toBeNumber(),
+          author: expect.toBeString(),
+          votes: expect.toBeNumber(),
+          created_at: expect.toBeString(),
+        };
+        expect(body).toMatchObject(desiredObject);
+      });
+  });
+  it("404: should return comment does not exist when given a valid id that doesn't exist", () => {
+    const payload = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/comments/99999")
+      .send(payload)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Comment does not exist");
+      });
+  });
+  it("400: should return invalid body when given an invalid body", () => {
+    const payload = { votes: 1 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(payload)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid body");
+        expect(body.errors).toEqual(["inc_votes does not exist on payload"]);
+      });
+  });
+  it("400: should return bad request when given an invalid id", () => {
+    const payload = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/comment")
+      .send(payload)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad Request");
+      });
+  });
+});
