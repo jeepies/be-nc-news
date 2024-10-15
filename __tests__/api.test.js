@@ -283,9 +283,7 @@ describe("GET /api/articles/:id/comments", () => {
       .get("/api/articles/999/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).toBe(
-          "Article not found"
-        );
+        expect(body.message).toBe("Article not found");
       });
   });
   it("should return appropriately when given an article with no comments", () => {
@@ -435,6 +433,39 @@ describe("GET /api/users", () => {
           expect(typeof user.name).toBe("string");
           expect(typeof user.avatar_url).toBe("string");
         });
+      });
+  });
+});
+
+describe("POST /api/topics", () => {
+  it("should create a new topic and return the topic object", () => {
+    const payload = {
+      slug: "programming",
+      description: "silly little computers beep boop",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(payload)
+      .expect(200)
+      .then(({ body: { slug, description } }) => {
+        expect(slug).toBe(payload.slug);
+        expect(description).toBe(payload.description);
+      });
+  });
+  it("should return appropriate error when passed in incorrect data", () => {
+    const payload = {
+      slug: 1,
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(payload)
+      .expect(400)
+      .then(({ body: { message, errors } }) => {
+        expect(message).toBe("Invalid body");
+        expect(errors).toEqual([
+          "slug is invalid type - expected string, got number",
+          "description does not exist on payload",
+        ]);
       });
   });
 });
