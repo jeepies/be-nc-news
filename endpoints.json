@@ -90,5 +90,13 @@
       "slug": "programming",
       "description": "a topic all for programming and silly little computers"
     }
+  },
+  "GET /api/users/:username": {
+    "description": "get a user object based on a username",
+    "exampleResponse": {
+      "username": "jeepies",
+      "avatar_url": "https://avatars.githubusercontent.com/u/109990582?v=4",
+      "name": "jay"
+    }
   }
 }

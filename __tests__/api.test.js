@@ -420,3 +420,27 @@ describe("POST /api/topics", () => {
       });
   });
 });
+
+describe("GET /api/users/:username", () => {
+  it("200: should return a user object", () => {
+    return request(app)
+      .get("/api/users/icellusedkars")
+      .expect(200)
+      .then(({ body }) => {
+        const desiredObject = {
+          username: expect.toBeString(),
+          avatar_url: expect.toBeString(),
+          name: expect.toBeString(),
+        };
+        expect(body).toMatchObject(desiredObject);
+      });
+  });
+  it("404: should return when passed a non-existent username", () => {
+    return request(app)
+      .get("/api/users/jay")
+      .expect(404)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("User not found");
+      });
+  });
+});
