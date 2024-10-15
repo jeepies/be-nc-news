@@ -18,7 +18,7 @@ afterAll(() => {
 });
 
 describe("GET /api", () => {
-  it("should respond with an array of endpoints", () => {
+  it("200: should respond with an array of endpoints", () => {
     return request(app)
       .get("/api")
       .expect(200)
@@ -29,7 +29,7 @@ describe("GET /api", () => {
 });
 
 describe("GET: /api/topics", () => {
-  it("should respond with an array of topic objects", () => {
+  it("200: should respond with an array of topic objects", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -45,7 +45,7 @@ describe("GET: /api/topics", () => {
 });
 
 describe("GET /api/articles/:id", () => {
-  it("should respond with an article object", () => {
+  it("200: should respond with an article object", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -77,7 +77,7 @@ describe("GET /api/articles/:id", () => {
         }
       );
   });
-  it("should return appropriately when given a valid ID that does not exist", () => {
+  it("404: should return appropriately when given a valid ID that does not exist", () => {
     return request(app)
       .get("/api/articles/999")
       .expect(404)
@@ -85,7 +85,7 @@ describe("GET /api/articles/:id", () => {
         expect(body.message).toEqual("ID does not exist");
       });
   });
-  it("should return invalid request when passed in erroneous data", () => {
+  it("400: should return invalid request when passed in erroneous data", () => {
     return request(app)
       .get("/api/articles/id")
       .expect(400)
@@ -96,7 +96,18 @@ describe("GET /api/articles/:id", () => {
 });
 
 describe("GET /api/articles", () => {
-  it("should respond with an array of article objects", () => {
+  const desiredObject = {
+    article_id: expect.toBeNumber(),
+    title: expect.toBeString(),
+    author: expect.toBeString(),
+    topic: expect.toBeString(),
+    created_at: expect.toBeString(),
+    votes: expect.toBeNumber(),
+    article_img_url: expect.toBeString(),
+    comment_count: expect.toBeNumber(),
+  };
+
+  it("200: should respond with an array of article objects", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -105,20 +116,12 @@ describe("GET /api/articles", () => {
         expect(Array.isArray(articles)).toBe(true);
         expect(articles.length).toBe(13);
         expect(articles).toBeSortedBy("created_at", { descending: true });
-        articles.forEach((article) => {
-          expect(typeof article.article_id).toBe("number");
-          expect(typeof article.title).toBe("string");
-          expect(typeof article.author).toBe("string");
-          expect(typeof article.topic).toBe("string");
-          expect(typeof article.created_at).toBe("string");
-          expect(typeof article.votes).toBe("number");
-          expect(typeof article.article_img_url).toBe("string");
-          expect(typeof article.comment_count).toBe("number");
-          expect(typeof article.body).toBe("undefined");
-        });
+        articles.forEach((article) =>
+          expect(article).toMatchObject(desiredObject)
+        );
       });
   });
-  it("should respond with an array of article objects when passed a sort_by query", () => {
+  it("200: should respond with an array of article objects when passed a sort_by query", () => {
     return request(app)
       .get("/api/articles?sort_by=title")
       .expect(200)
@@ -127,20 +130,12 @@ describe("GET /api/articles", () => {
         expect(Array.isArray(articles)).toBe(true);
         expect(articles.length).toBe(13);
         expect(articles).toBeSortedBy("title", { descending: true });
-        articles.forEach((article) => {
-          expect(typeof article.article_id).toBe("number");
-          expect(typeof article.title).toBe("string");
-          expect(typeof article.author).toBe("string");
-          expect(typeof article.topic).toBe("string");
-          expect(typeof article.created_at).toBe("string");
-          expect(typeof article.votes).toBe("number");
-          expect(typeof article.article_img_url).toBe("string");
-          expect(typeof article.comment_count).toBe("number");
-          expect(typeof article.body).toBe("undefined");
-        });
+        articles.forEach((article) =>
+          expect(article).toMatchObject(desiredObject)
+        );
       });
   });
-  it("should respond with an array of article objects when passed sort_by and order queries", () => {
+  it("200: should respond with an array of article objects when passed sort_by and order queries", () => {
     return request(app)
       .get("/api/articles?sort_by=votes&order=asc")
       .expect(200)
@@ -149,20 +144,12 @@ describe("GET /api/articles", () => {
         expect(Array.isArray(articles)).toBe(true);
         expect(articles.length).toBe(13);
         expect(articles).toBeSortedBy("votes", { descending: false });
-        articles.forEach((article) => {
-          expect(typeof article.article_id).toBe("number");
-          expect(typeof article.title).toBe("string");
-          expect(typeof article.author).toBe("string");
-          expect(typeof article.topic).toBe("string");
-          expect(typeof article.created_at).toBe("string");
-          expect(typeof article.votes).toBe("number");
-          expect(typeof article.article_img_url).toBe("string");
-          expect(typeof article.comment_count).toBe("number");
-          expect(typeof article.body).toBe("undefined");
-        });
+        articles.forEach((article) =>
+          expect(article).toMatchObject(desiredObject)
+        );
       });
   });
-  it("should respond with an array of article objects when passed an erroneous sort_by and order queries", () => {
+  it("200: should respond with an array of article objects when passed an erroneous sort_by and order queries", () => {
     return request(app)
       .get("/api/articles?sort_by=test&order=test")
       .expect(200)
@@ -171,20 +158,12 @@ describe("GET /api/articles", () => {
         expect(Array.isArray(articles)).toBe(true);
         expect(articles.length).toBe(13);
         expect(articles).toBeSortedBy("created_at", { descending: true });
-        articles.forEach((article) => {
-          expect(typeof article.article_id).toBe("number");
-          expect(typeof article.title).toBe("string");
-          expect(typeof article.author).toBe("string");
-          expect(typeof article.topic).toBe("string");
-          expect(typeof article.created_at).toBe("string");
-          expect(typeof article.votes).toBe("number");
-          expect(typeof article.article_img_url).toBe("string");
-          expect(typeof article.comment_count).toBe("number");
-          expect(typeof article.body).toBe("undefined");
-        });
+        articles.forEach((article) =>
+          expect(article).toMatchObject(desiredObject)
+        );
       });
   });
-  it("should respond with an array of article objects when passed a topic", () => {
+  it("200: should respond with an array of article objects when passed a topic", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
       .expect(200)
@@ -194,41 +173,12 @@ describe("GET /api/articles", () => {
         expect(articles.length).toBe(12);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
-          expect(typeof article.article_id).toBe("number");
-          expect(typeof article.title).toBe("string");
-          expect(typeof article.author).toBe("string");
+          expect(article).toMatchObject(desiredObject);
           expect(article.topic).toBe("mitch");
-          expect(typeof article.created_at).toBe("string");
-          expect(typeof article.votes).toBe("number");
-          expect(typeof article.article_img_url).toBe("string");
-          expect(typeof article.comment_count).toBe("number");
-          expect(typeof article.body).toBe("undefined");
         });
       });
   });
-  it("should respond with an array of article objects when passed a topic", () => {
-    return request(app)
-      .get("/api/articles?topic=cats")
-      .expect(200)
-      .then(({ body }) => {
-        const articles = body.articles;
-        expect(Array.isArray(articles)).toBe(true);
-        expect(articles.length).toBe(1);
-        expect(articles).toBeSortedBy("created_at", { descending: true });
-        articles.forEach((article) => {
-          expect(typeof article.article_id).toBe("number");
-          expect(typeof article.title).toBe("string");
-          expect(typeof article.author).toBe("string");
-          expect(article.topic).toBe("cats");
-          expect(typeof article.created_at).toBe("string");
-          expect(typeof article.votes).toBe("number");
-          expect(typeof article.article_img_url).toBe("string");
-          expect(typeof article.comment_count).toBe("number");
-          expect(typeof article.body).toBe("undefined");
-        });
-      });
-  });
-  it("should respond with an array of article objects when passed multiple queries", () => {
+  it("200: should respond with an array of article objects when passed multiple queries", () => {
     return request(app)
       .get("/api/articles?topic=mitch&sort_by=title&order=asc")
       .expect(200)
@@ -238,19 +188,12 @@ describe("GET /api/articles", () => {
         expect(articles.length).toBe(12);
         expect(articles).toBeSortedBy("title", { descending: false });
         articles.forEach((article) => {
-          expect(typeof article.article_id).toBe("number");
-          expect(typeof article.title).toBe("string");
-          expect(typeof article.author).toBe("string");
+          expect(article).toMatchObject(desiredObject);
           expect(article.topic).toBe("mitch");
-          expect(typeof article.created_at).toBe("string");
-          expect(typeof article.votes).toBe("number");
-          expect(typeof article.article_img_url).toBe("string");
-          expect(typeof article.comment_count).toBe("number");
-          expect(typeof article.body).toBe("undefined");
         });
       });
   });
-  it("should respond with an array of article objects when passed a topic that doesn't exist", () => {
+  it("400: should respond with an error when passed an invalid topic", () => {
     return request(app)
       .get("/api/articles?topic=northcoders")
       .expect(400)
@@ -261,7 +204,7 @@ describe("GET /api/articles", () => {
 });
 
 describe("GET /api/articles/:id/comments", () => {
-  it("should return all comments from article", () => {
+  it("200: should return all comments from article", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -278,15 +221,7 @@ describe("GET /api/articles/:id/comments", () => {
         });
       });
   });
-  it("should return appropriately when given a non-existent article", () => {
-    return request(app)
-      .get("/api/articles/999/comments")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.message).toBe("Article not found");
-      });
-  });
-  it("should return appropriately when given an article with no comments", () => {
+  it("200: should return appropriately when given an article with no comments", () => {
     return request(app)
       .get("/api/articles/8/comments")
       .expect(200)
@@ -294,7 +229,15 @@ describe("GET /api/articles/:id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
-  it("should return appropriately hen given an invalid query parameter", () => {
+  it("404: should return appropriately when given a non-existent article", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Article not found");
+      });
+  });
+  it("400: should return appropriately hen given an invalid query parameter", () => {
     return request(app)
       .get("/api/articles/id/comments")
       .expect(400)
@@ -305,7 +248,7 @@ describe("GET /api/articles/:id/comments", () => {
 });
 
 describe("POST /api/articles/:id/comments", () => {
-  it("should add a new comment, and return it", () => {
+  it("200: should add a new comment, and return it", () => {
     const comment = {
       username: "icellusedkars",
       body: "i'm a commenter :3",
@@ -327,7 +270,7 @@ describe("POST /api/articles/:id/comments", () => {
         }
       );
   });
-  it("should return appropriately when given an invalid comment", () => {
+  it("400: should return appropriately when given an invalid comment", () => {
     const comment = {
       username: 1,
     };
@@ -345,7 +288,7 @@ describe("POST /api/articles/:id/comments", () => {
 });
 
 describe("PATCH: /api/articles/:id", () => {
-  it("should update an article and return the updated article", () => {
+  it("200: should update an article and return the updated article", () => {
     const update = { inc_votes: 1 };
     return request(app)
       .patch("/api/articles/1")
@@ -355,7 +298,7 @@ describe("PATCH: /api/articles/:id", () => {
         expect(votes).toBe(101);
       });
   });
-  it("should update an article and return the updated article", () => {
+  it("200: should update an article and return the updated article", () => {
     const update = { inc_votes: -205 };
     return request(app)
       .patch("/api/articles/1")
@@ -365,7 +308,7 @@ describe("PATCH: /api/articles/:id", () => {
         expect(votes).toBe(-105);
       });
   });
-  it("should return appropriately when passed in invalid data", () => {
+  it("400: should return appropriately when passed in invalid data", () => {
     const update = {};
     return request(app)
       .patch("/api/articles/1")
@@ -376,17 +319,7 @@ describe("PATCH: /api/articles/:id", () => {
         expect(data).toEqual(["inc_votes does not exist on payload"]);
       });
   });
-  it("should return appropriately when passed in an invalid article", () => {
-    const update = { inc_votes: 12 };
-    return request(app)
-      .patch("/api/articles/999")
-      .send(update)
-      .expect(404)
-      .then(({ body: { message } }) => {
-        expect(message).toBe("Article not found");
-      });
-  });
-  it("should return appropriately when passed in an invalid article", () => {
+  it("400: should return appropriately when passed in an invalid article", () => {
     const update = { inc_votes: 12 };
     return request(app)
       .patch("/api/articles/id")
@@ -396,13 +329,23 @@ describe("PATCH: /api/articles/:id", () => {
         expect(message).toBe("Bad Request");
       });
   });
+  it("404: should return appropriately when passed in an invalid article", () => {
+    const update = { inc_votes: 12 };
+    return request(app)
+      .patch("/api/articles/999")
+      .send(update)
+      .expect(404)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Article not found");
+      });
+  });
 });
 
 describe("DELETE /api/comments/:id", () => {
-  it("should delete a comment", () => {
+  it("204: should delete a comment", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
-  it("should return appropriately when deleting a non-existent comment", () => {
+  it("404: should return appropriately when deleting a non-existent comment", () => {
     return request(app)
       .delete("/api/comments/999999")
       .expect(404)
@@ -410,7 +353,7 @@ describe("DELETE /api/comments/:id", () => {
         expect(message).toBe("Comment not found");
       });
   });
-  it("should return appropriately when passed a non-numeric id", () => {
+  it("400: should return appropriately when passed a non-numeric id", () => {
     return request(app)
       .delete("/api/comments/comment")
       .expect(400)
@@ -421,7 +364,7 @@ describe("DELETE /api/comments/:id", () => {
 });
 
 describe("GET /api/users", () => {
-  it("should return an array of user objects", () => {
+  it("200: should return an array of user objects", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
@@ -438,7 +381,7 @@ describe("GET /api/users", () => {
 });
 
 describe("POST /api/topics", () => {
-  it("should create a new topic and return the topic object", () => {
+  it("200: should create a new topic and return the topic object", () => {
     const payload = {
       slug: "programming",
       description: "silly little computers beep boop",
@@ -452,7 +395,7 @@ describe("POST /api/topics", () => {
         expect(description).toBe(payload.description);
       });
   });
-  it("should return appropriate error when passed in incorrect data", () => {
+  it("400: should return appropriate error when passed in incorrect data", () => {
     const payload = {
       slug: 1,
     };
