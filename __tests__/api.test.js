@@ -193,6 +193,14 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  it("200: should respond with an empty array when passed a topic with no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
   it("400: should respond with an error when passed an invalid topic", () => {
     return request(app)
       .get("/api/articles?topic=northcoders")
