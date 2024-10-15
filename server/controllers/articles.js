@@ -22,18 +22,20 @@ exports.getAll = (request, response, next) => {
     .catch((err) => next(err));
 };
 
-exports.getCommentsByID = (request, response, next) => {
+exports.getCommentsByID = async (request, response, next) => {
   const { id } = request.params;
-  model
-    .fetchCommentsByID(id)
-    .then((data) => {
-      if (data.length === 0)
-        response
-          .status(404)
-          .json({ message: "This article has no comments, or does not exist" });
-      else response.status(200).json({ comments: data });
-    })
-    .catch((err) => next(err));
+  let article;
+  try {
+    article = await model.fetchByID(id);
+  } catch(err) {
+    return next(err)
+  }
+
+  if (article.rowCount === 0)
+    return response.status(404).json({ message: "Article not found" });
+
+  const comments = await model.fetchCommentsByID(id);
+  response.status(200).json({ comments: comments });
 };
 
 exports.addComment = (request, response, next) => {
@@ -64,7 +66,6 @@ exports.updateArticle = (request, response, next) => {
   const schema = {
     inc_votes: "number",
   };
-
   const payload = request.body;
   const result = validator(payload, schema);
 

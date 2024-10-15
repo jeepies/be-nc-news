@@ -24,6 +24,11 @@ app.use((err, request, response, next) => {
 });
 
 app.use((err, request, response, next) => {
+  if(err.status && err.message) return response.status(err.status).json({ message: err.message })
+    next();
+})
+
+app.use((err, request, response, next) => {
   console.log(err);
   response.status(500).send({ message: "Internal Server Error" });
 });

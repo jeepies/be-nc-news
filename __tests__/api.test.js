@@ -142,18 +142,16 @@ describe("GET /api/articles/:id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.message).toBe(
-          "This article has no comments, or does not exist"
+          "Article not found"
         );
       });
   });
   it("should return appropriately when given an article with no comments", () => {
     return request(app)
       .get("/api/articles/8/comments")
-      .expect(404)
+      .expect(200)
       .then(({ body }) => {
-        expect(body.message).toBe(
-          "This article has no comments, or does not exist"
-        );
+        expect(body.comments).toEqual([]);
       });
   });
   it("should return appropriately hen given an invalid query parameter", () => {
