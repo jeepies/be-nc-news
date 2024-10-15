@@ -9,3 +9,11 @@ exports.fetchBySlug = (slug) => {
     .query(`SELECT * FROM topics WHERE slug = $1`, [slug])
     .then((data) => data.rows[0]);
 };
+
+exports.create = (payload) =>
+  db
+    .query(
+      `INSERT INTO topics (slug, description) VALUES ($1, $2) RETURNING *`,
+      [payload.slug, payload.description]
+    )
+    .then((data) => data.rows[0]);

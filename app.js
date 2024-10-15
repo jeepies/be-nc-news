@@ -15,6 +15,7 @@ app.post("/api/articles/:id/comments", controllers.articles.addComment);
 app.patch("/api/articles/:id", controllers.articles.updateArticle);
 app.delete("/api/comments/:id", controllers.comments.delete);
 app.get("/api/users", controllers.users.getAll);
+app.post("/api/topics", controllers.topics.create);
 
 app.use((err, request, response, next) => {
   const PSQL_ERR_CODES = ["42P02", "22P02"];
