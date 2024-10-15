@@ -11,7 +11,7 @@ exports.fetchByID = (id) => {
     .then((data) => data);
 };
 
-exports.fetchAll = (topic, sort_by, order) => {
+exports.fetchAll = (sort_by, order, topic) => {
   let query = `SELECT 
         articles.article_id, articles.title, articles.author, 
         articles.topic, articles.created_at, articles.votes,

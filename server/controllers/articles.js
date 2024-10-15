@@ -15,7 +15,7 @@ exports.getByID = (request, response, next) => {
 };
 
 exports.getAll = async (request, response, next) => {
-  const VALID_SORT_BY = [
+  const validSortBy = [
     "article_id",
     "title",
     "topic",
@@ -23,21 +23,21 @@ exports.getAll = async (request, response, next) => {
     "created_at",
     "votes",
   ];
-  const VALID_ORDER = ["desc", "asc"];
+  const validOrder = ["desc", "asc"];
 
   let { sort_by, order, topic } = request.query;
 
-  sort_by = VALID_SORT_BY.includes(sort_by) ? sort_by : "created_at";
-  order = VALID_ORDER.includes(order) ? order : "desc";
+  sort_by = validSortBy.includes(sort_by) ? sort_by : "created_at";
+  order = validOrder.includes(order) ? order : "desc";
 
   try {
     let articles;
     if (topic) {
       const topicData = await topics.fetchBySlug(topic);
       if (topicData)
-        articles = await model.fetchAll(topicData.slug, sort_by, order);
+        articles = await model.fetchAll(sort_by, order, topicData.slug);
       else response.status(400).json({ message: "Topic does not exist" });
-    } else articles = await model.fetchAll(undefined, sort_by, order);
+    } else articles = await model.fetchAll(sort_by, order);
 
     return response.status(200).json({ articles: articles });
   } catch (err) {
