@@ -1,4 +1,5 @@
 const model = require("../models").articles;
+const topics = require("../models").topics;
 const { validator } = require("../../utils/validator");
 
 exports.getByID = (request, response, next) => {
@@ -13,7 +14,7 @@ exports.getByID = (request, response, next) => {
     .catch((err) => next(err));
 };
 
-exports.getAll = (request, response, next) => {
+exports.getAll = async (request, response, next) => {
   const VALID_SORT_BY = [
     "article_id",
     "title",
@@ -24,17 +25,24 @@ exports.getAll = (request, response, next) => {
   ];
   const VALID_ORDER = ["desc", "asc"];
 
-  let { sort_by, order } = request.query;
+  let { sort_by, order, topic } = request.query;
 
   sort_by = VALID_SORT_BY.includes(sort_by) ? sort_by : "created_at";
   order = VALID_ORDER.includes(order) ? order : "desc";
 
-  model
-    .fetchAll(sort_by, order)
-    .then((data) => {
-      response.status(200).json({ articles: data });
-    })
-    .catch((err) => next(err));
+  try {
+    let articles;
+    if (topic) {
+      const topicData = await topics.fetchBySlug(topic);
+      if (topicData)
+        articles = await model.fetchAll(topicData.slug, sort_by, order);
+      else response.status(400).json({ message: "Topic does not exist" });
+    } else articles = await model.fetchAll(undefined, sort_by, order);
+
+    return response.status(200).json({ articles: articles });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.getCommentsByID = async (request, response, next) => {

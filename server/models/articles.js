@@ -8,23 +8,23 @@ exports.fetchByID = (id) => {
     .then((data) => data);
 };
 
-exports.fetchAll = (sort_by, order) => {
-  const query = format(`      SELECT 
+exports.fetchAll = (topic, sort_by, order) => {
+  let query = `SELECT 
         articles.article_id, articles.title, articles.author, 
         articles.topic, articles.created_at, articles.votes,
         articles.article_img_url, COUNT(comments)::Int AS comment_count
-      FROM articles 
-      
-      LEFT JOIN comments ON comments.article_id = articles.article_id
+      FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`;
 
-      GROUP BY articles.article_id
-      ORDER BY articles.%s %s`, sort_by, order.toUpperCase())
+  if (topic) query += format(` WHERE topic = '%s'`, topic);
 
-    console.log(query)
+  query += format(
+    ` GROUP BY articles.article_id
+      ORDER BY articles.%s %s`,
+    sort_by,
+    order
+  );
 
-  return db
-    .query(query)
-    .then((data) => data.rows).catch((err) => console.log(err));
+  return db.query(query).then((data) => data.rows);
 };
 
 exports.fetchCommentsByID = (id) => {
