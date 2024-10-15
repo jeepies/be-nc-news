@@ -1,10 +1,13 @@
 const db = require("../../db/connection");
 const format = require("pg-format");
-const { sort } = require("../../db/data/test-data/articles");
 
 exports.fetchByID = (id) => {
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [id])
+    .query(`SELECT 
+        articles.article_id, articles.title, articles.author, 
+        articles.topic, articles.created_at, articles.votes,
+        articles.body, articles.article_img_url, COUNT(comments)::Int AS comment_count
+      FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`, [id])
     .then((data) => data);
 };
 
@@ -15,14 +18,9 @@ exports.fetchAll = (topic, sort_by, order) => {
         articles.article_img_url, COUNT(comments)::Int AS comment_count
       FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`;
 
-  if (topic) query += format(` WHERE topic = '%s'`, topic);
+  if (topic) query += ` WHERE topic = '${topic}'`;
 
-  query += format(
-    ` GROUP BY articles.article_id
-      ORDER BY articles.%s %s`,
-    sort_by,
-    order
-  );
+  query += ` GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order}`;
 
   return db.query(query).then((data) => data.rows);
 };

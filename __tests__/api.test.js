@@ -60,6 +60,7 @@ describe("GET /api/articles/:id", () => {
             created_at,
             votes,
             article_img_url,
+            comment_count,
           },
         }) => {
           expect(author).toBe("butter_bridge");
@@ -72,6 +73,7 @@ describe("GET /api/articles/:id", () => {
           expect(article_img_url).toBe(
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
           );
+          expect(comment_count).toBe(11);
         }
       );
   });
