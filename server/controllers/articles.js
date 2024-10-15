@@ -14,8 +14,23 @@ exports.getByID = (request, response, next) => {
 };
 
 exports.getAll = (request, response, next) => {
+  const VALID_SORT_BY = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+  ];
+  const VALID_ORDER = ["desc", "asc"];
+
+  let { sort_by, order } = request.query;
+
+  sort_by = VALID_SORT_BY.includes(sort_by) ? sort_by : "created_at";
+  order = VALID_ORDER.includes(order) ? order : "desc";
+
   model
-    .fetchAll()
+    .fetchAll(sort_by, order)
     .then((data) => {
       response.status(200).json({ articles: data });
     })
@@ -27,8 +42,8 @@ exports.getCommentsByID = async (request, response, next) => {
   let article;
   try {
     article = await model.fetchByID(id);
-  } catch(err) {
-    return next(err)
+  } catch (err) {
+    return next(err);
   }
 
   if (article.rowCount === 0)

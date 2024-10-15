@@ -1,5 +1,6 @@
 const db = require("../../db/connection");
 const format = require("pg-format");
+const { sort } = require("../../db/data/test-data/articles");
 
 exports.fetchByID = (id) => {
   return db
@@ -7,11 +8,8 @@ exports.fetchByID = (id) => {
     .then((data) => data);
 };
 
-exports.fetchAll = () => {
-  return db
-    .query(
-      `
-      SELECT 
+exports.fetchAll = (sort_by, order) => {
+  const query = format(`      SELECT 
         articles.article_id, articles.title, articles.author, 
         articles.topic, articles.created_at, articles.votes,
         articles.article_img_url, COUNT(comments)::Int AS comment_count
@@ -20,10 +18,13 @@ exports.fetchAll = () => {
       LEFT JOIN comments ON comments.article_id = articles.article_id
 
       GROUP BY articles.article_id
-      ORDER BY articles.created_at DESC
-      `
-    )
-    .then((data) => data.rows);
+      ORDER BY articles.%s %s`, sort_by, order.toUpperCase())
+
+    console.log(query)
+
+  return db
+    .query(query)
+    .then((data) => data.rows).catch((err) => console.log(err));
 };
 
 exports.fetchCommentsByID = (id) => {
