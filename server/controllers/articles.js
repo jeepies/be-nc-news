@@ -1,5 +1,6 @@
 const model = require("../models").articles;
 const topics = require("../models").topics;
+const users = require("../models").users;
 const { validator } = require("../../utils/validator");
 
 exports.getByID = (request, response, next) => {
@@ -107,4 +108,37 @@ exports.updateArticle = (request, response, next) => {
       response.status(200).json(data);
     })
     .catch((err) => next(err));
+};
+
+exports.create = async (request, response, next) => {
+  const schema = {
+    author: "string",
+    title: "string",
+    body: "string",
+    topic: "string",
+    article_img_url: "string,optional",
+  };
+
+  const payload = request.body;
+  const result = validator(payload, schema);
+
+  if (!result.success)
+    return response
+      .status(400)
+      .json({ message: "Invalid body", errors: result.errors });
+
+  try {
+    const user = await users.fetchByUsername(payload.author);
+    if (!user) return response.status(404).json({ message: "User not found" });
+
+    const topic = await topics.fetchBySlug(payload.topic);
+    if (!topic)
+      return response.status(404).json({ message: "Topic not found" });
+
+    const article = await model.create(payload);
+    article.comment_count = 0;
+    response.status(200).json(article);
+  } catch (e) {
+    next(e);
+  }
 };

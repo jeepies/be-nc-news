@@ -107,9 +107,15 @@ describe("formatComments", () => {
 
 describe("validator", () => {
   const schema = {
-    username: "string",
-    body: "string",
-  };
+      username: "string",
+      body: "string",
+    },
+    optionalSchema = {
+      username: "string",
+      password: "string",
+      email: "string,optional",
+      age: "number",
+    };
   it("should return an object detailing validation on success", () => {
     const payload = {
       username: "jay",
@@ -135,5 +141,32 @@ describe("validator", () => {
     expect(result2.errors).toEqual([
       "username is invalid type - expected string, got number",
     ]);
+  });
+  it("should return an object with optional fields, where optional value exists", () => {
+    const payload = {
+      username: "admin",
+      password: "password",
+      email: "jay@test.com",
+      age: 19,
+    };
+    expect(validator(payload, optionalSchema).success).toBe(true);
+  });
+  it("should return an object with optional fields, where optional value exists", () => {
+    const payload = {
+      username: "admin",
+      password: "password",
+      age: 19,
+    };
+    expect(validator(payload, optionalSchema).errors).toEqual([]);
+    expect(validator(payload, optionalSchema).success).toBe(true);
+  });
+  it("should return an object with optional fields, where optional value exists and is incorrect", () => {
+    const payload = {
+      username: "admin",
+      password: "password",
+      email: 1,
+      age: 19,
+    };
+    expect(validator(payload, optionalSchema).success).toBe(false);
   });
 });

@@ -3,11 +3,14 @@ const format = require("pg-format");
 
 exports.fetchByID = (id) => {
   return db
-    .query(`SELECT 
+    .query(
+      `SELECT 
         articles.article_id, articles.title, articles.author, 
         articles.topic, articles.created_at, articles.votes,
         articles.body, articles.article_img_url, COUNT(comments)::Int AS comment_count
-      FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`, [id])
+      FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`,
+      [id]
+    )
     .then((data) => data);
 };
 
@@ -47,4 +50,20 @@ exports.update = (id, payload) => {
     id
   );
   return db.query(query).then((data) => data.rows[0]);
+};
+
+exports.create = (payload) => {
+  const params = [payload.title, payload.topic, payload.author, payload.body];
+  if (payload.article_img_url) params.push(payload.article_img_url);
+
+  return db
+    .query(
+      `INSERT INTO articles (title, topic, author, body${
+        payload.article_img_url ? ", article_img_url" : ""
+      }) VALUES ($1, $2, $3, $4${
+        payload.article_img_url ? ", $5" : ""
+      }) RETURNING *`,
+      params
+    )
+    .then((data) => data.rows[0])
 };
