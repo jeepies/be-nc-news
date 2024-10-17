@@ -8,15 +8,15 @@ const {
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
-    .query(`DROP TABLE IF EXISTS comments;`)
+    .query(`DROP TABLE IF EXISTS comments CASCADE;`)
     .then(() => {
-      return db.query(`DROP TABLE IF EXISTS articles;`);
+      return db.query(`DROP TABLE IF EXISTS articles CASCADE;`);
     })
     .then(() => {
-      return db.query(`DROP TABLE IF EXISTS users;`);
+      return db.query(`DROP TABLE IF EXISTS users CASCADE;`);
     })
     .then(() => {
-      return db.query(`DROP TABLE IF EXISTS topics;`);
+      return db.query(`DROP TABLE IF EXISTS topics CASCADE;`);
     })
     .then(() => {
       const topicsTablePromise = db.query(`
@@ -52,8 +52,8 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       CREATE TABLE comments (
         comment_id SERIAL PRIMARY KEY,
         body VARCHAR NOT NULL,
-        article_id INT REFERENCES articles(article_id) NOT NULL,
-        author VARCHAR REFERENCES users(username) NOT NULL,
+        article_id INT REFERENCES articles(article_id) ON DELETE CASCADE NOT NULL,
+        author VARCHAR REFERENCES users(username) ON DELETE CASCADE NOT NULL,
         votes INT DEFAULT 0 NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
       );`);

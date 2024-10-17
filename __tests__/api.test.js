@@ -256,21 +256,14 @@ describe("GET /api/articles/:id/comments", () => {
   });
   it("200: should return a paginated response of all comments", () => {
     return Promise.all([
-      request(app)
-        .get("/api/articles/1/comments?limit=2")
-        .expect(200),
-      request(app)
-        .get("/api/articles/1/comments?limit=2&p=1")
-        .expect(200),
-      request(app)
-        .get("/api/articles/1/comments?limit=2&p=2")
-        .expect(200),
+      request(app).get("/api/articles/1/comments?limit=2").expect(200),
+      request(app).get("/api/articles/1/comments?limit=2&p=1").expect(200),
+      request(app).get("/api/articles/1/comments?limit=2&p=2").expect(200),
     ]).then((data) => {
       const comments = data.map((data) => data.body.comments).flat();
-      console.log(comments)
       expect(comments.length).toBe(6);
       expect(comments).toBeSortedBy("comment_id", { descending: false });
-    }); 
+    });
   });
   it("404: should return appropriately when given a non-existent article", () => {
     return request(app)
@@ -631,5 +624,25 @@ describe("POST /api/articles", () => {
           "body is invalid type - expected string, got boolean",
         ]);
       });
+  });
+});
+
+describe("DELETE /api/articles/:id", () => {
+  it("204: should delete an article", () => {
+    return request(app).delete("/api/articles/1").expect(204);
+  });
+  it("404: should return appropriately when given a non-existent article", () => {
+    return request(app)
+      .delete("/api/articles/99999")
+      .expect(404)
+      .then(({ body: { message } }) =>
+        expect(message).toBe("Article not found. No rows affected")
+      );
+  });
+  it("400: should return when given a non-numeric value for id", () => {
+    return request(app)
+      .delete("/api/articles/abc")
+      .expect(400)
+      .then(({ body: { message } }) => expect(message).toBe("Bad Request"));
   });
 });

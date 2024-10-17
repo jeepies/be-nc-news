@@ -30,7 +30,11 @@ exports.fetchAll = (sort_by, order, limit, p, topic) => {
 
 exports.fetchCommentsByID = (id, p, limit) => {
   return db
-    .query(`SELECT * FROM comments WHERE article_id = $1 LIMIT $2 OFFSET $3`, [id, limit, p])
+    .query(`SELECT * FROM comments WHERE article_id = $1 LIMIT $2 OFFSET $3`, [
+      id,
+      limit,
+      p,
+    ])
     .then((data) => data.rows);
 };
 
@@ -65,5 +69,10 @@ exports.create = (payload) => {
       }) RETURNING *`,
       params
     )
-    .then((data) => data.rows[0])
+    .then((data) => data.rows[0]);
 };
+
+exports.delete = (id) =>
+  db
+    .query(`DELETE FROM articles WHERE article_id = $1`, [id])
+    .then((data) => data);
