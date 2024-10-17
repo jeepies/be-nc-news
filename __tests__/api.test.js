@@ -330,7 +330,7 @@ describe("POST /api/articles/:id/comments", () => {
   });
 });
 
-describe("PATCH: /api/articles/:id", () => {
+describe("PATCH /api/articles/:id", () => {
   it("200: should update an article and return the updated article", () => {
     const update = { inc_votes: 1 };
     return request(app)
