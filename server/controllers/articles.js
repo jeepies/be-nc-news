@@ -38,7 +38,13 @@ exports.getAll = async (request, response, next) => {
     if (topic) {
       const topicData = await topics.fetchBySlug(topic);
       if (topicData)
-        articles = await model.fetchAll(sort_by, order, limit, p, topicData.slug);
+        articles = await model.fetchAll(
+          sort_by,
+          order,
+          limit,
+          p,
+          topicData.slug
+        );
       else response.status(400).json({ message: "Topic does not exist" });
     } else articles = await model.fetchAll(sort_by, order, limit, p);
 
@@ -148,4 +154,18 @@ exports.create = async (request, response, next) => {
   } catch (e) {
     next(e);
   }
+};
+
+exports.delete = (request, response, next) => {
+  const { id } = request.params;
+  model
+    .delete(id)
+    .then((data) => {
+      if (data.rowCount === 0)
+        return response
+          .status(404)
+          .json({ message: "Article not found. No rows affected" });
+      else return response.status(204).send();
+    })
+    .catch((err) => next(err));
 };

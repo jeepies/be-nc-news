@@ -18,6 +18,5 @@ exports.update = (id, payload) => {
       `UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *`,
       [payload.inc_votes, id]
     )
-    .then((data) => data.rows[0])
-    .catch(err => console.log(err));
+    .then((data) => data.rows[0]);
 };

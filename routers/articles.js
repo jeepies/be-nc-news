@@ -9,5 +9,6 @@ router.get("/:id", controller.getByID);
 router.patch("/:id", controller.updateArticle);
 router.get("/:id/comments", controller.getCommentsByID);
 router.post("/:id/comments", controller.addComment);
+router.delete("/:id", controller.delete);
 
 module.exports = router;
