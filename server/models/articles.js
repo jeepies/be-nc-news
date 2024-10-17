@@ -14,7 +14,7 @@ exports.fetchByID = (id) => {
     .then((data) => data);
 };
 
-exports.fetchAll = (sort_by, order, topic) => {
+exports.fetchAll = (sort_by, order, limit, p, topic) => {
   let query = `SELECT 
         articles.article_id, articles.title, articles.author, 
         articles.topic, articles.created_at, articles.votes,
@@ -23,7 +23,7 @@ exports.fetchAll = (sort_by, order, topic) => {
 
   if (topic) query += ` WHERE topic = '${topic}'`;
 
-  query += ` GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order}`;
+  query += ` GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order} LIMIT ${limit} OFFSET ${p}`;
 
   return db.query(query).then((data) => data.rows);
 };

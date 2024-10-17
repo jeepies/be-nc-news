@@ -114,7 +114,7 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const articles = body.articles;
         expect(Array.isArray(articles)).toBe(true);
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) =>
           expect(article).toMatchObject(desiredObject)
@@ -128,7 +128,7 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const articles = body.articles;
         expect(Array.isArray(articles)).toBe(true);
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("title", { descending: true });
         articles.forEach((article) =>
           expect(article).toMatchObject(desiredObject)
@@ -142,7 +142,7 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const articles = body.articles;
         expect(Array.isArray(articles)).toBe(true);
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("votes", { descending: false });
         articles.forEach((article) =>
           expect(article).toMatchObject(desiredObject)
@@ -156,7 +156,7 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const articles = body.articles;
         expect(Array.isArray(articles)).toBe(true);
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) =>
           expect(article).toMatchObject(desiredObject)
@@ -170,7 +170,7 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const articles = body.articles;
         expect(Array.isArray(articles)).toBe(true);
-        expect(articles.length).toBe(12);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
           expect(article).toMatchObject(desiredObject);
@@ -185,7 +185,7 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const articles = body.articles;
         expect(Array.isArray(articles)).toBe(true);
-        expect(articles.length).toBe(12);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("title", { descending: false });
         articles.forEach((article) => {
           expect(article).toMatchObject(desiredObject);
@@ -200,6 +200,23 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(body.articles).toEqual([]);
       });
+  });
+  it("200: should respond with a paginated object", () => {
+    return Promise.all([
+      request(app)
+        .get("/api/articles?sort_by=article_id&order=asc&limit=2")
+        .expect(200),
+      request(app)
+        .get("/api/articles?sort_by=article_id&order=asc&limit=2&p=1")
+        .expect(200),
+      request(app)
+        .get("/api/articles?sort_by=article_id&order=asc&limit=2&p=2")
+        .expect(200),
+    ]).then((data) => {
+      const articles = data.map((data) => data.body.articles).flat();
+      expect(articles.length).toBe(6);
+      expect(articles).toBeSortedBy("article_id", { descending: false });
+    });
   });
   it("400: should respond with an error when passed an invalid topic", () => {
     return request(app)

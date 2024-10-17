@@ -26,19 +26,21 @@ exports.getAll = async (request, response, next) => {
   ];
   const validOrder = ["desc", "asc"];
 
-  let { sort_by, order, topic } = request.query;
+  let { sort_by, order, topic, limit, p } = request.query;
 
   sort_by = validSortBy.includes(sort_by) ? sort_by : "created_at";
   order = validOrder.includes(order) ? order : "desc";
+  limit = limit ?? 10;
+  p = (p ?? 0) * limit;
 
   try {
     let articles;
     if (topic) {
       const topicData = await topics.fetchBySlug(topic);
       if (topicData)
-        articles = await model.fetchAll(sort_by, order, topicData.slug);
+        articles = await model.fetchAll(sort_by, order, limit, p, topicData.slug);
       else response.status(400).json({ message: "Topic does not exist" });
-    } else articles = await model.fetchAll(sort_by, order);
+    } else articles = await model.fetchAll(sort_by, order, limit, p);
 
     return response.status(200).json({ articles: articles });
   } catch (err) {
