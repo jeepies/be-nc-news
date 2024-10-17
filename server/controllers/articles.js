@@ -50,6 +50,7 @@ exports.getAll = async (request, response, next) => {
 
 exports.getCommentsByID = async (request, response, next) => {
   const { id } = request.params;
+
   let article;
   try {
     article = await model.fetchByID(id);
@@ -60,7 +61,11 @@ exports.getCommentsByID = async (request, response, next) => {
   if (article.rowCount === 0)
     return response.status(404).json({ message: "Article not found" });
 
-  const comments = await model.fetchCommentsByID(id);
+  let { limit, p } = request.query;
+  limit = limit ?? 10;
+  p = (p ?? 0) * limit;
+
+  const comments = await model.fetchCommentsByID(id, p, limit);
   response.status(200).json({ comments: comments });
 };
 

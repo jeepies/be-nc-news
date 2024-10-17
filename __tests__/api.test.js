@@ -235,7 +235,7 @@ describe("GET /api/articles/:id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body.comments)).toBe(true);
-        expect(body.comments.length).toBe(11);
+        expect(body.comments.length).toBe(10);
         body.comments.forEach((comment) => {
           expect(typeof comment.comment_id).toBe("number");
           expect(typeof comment.votes).toBe("number");
@@ -253,6 +253,24 @@ describe("GET /api/articles/:id/comments", () => {
       .then(({ body }) => {
         expect(body.comments).toEqual([]);
       });
+  });
+  it("200: should return a paginated response of all comments", () => {
+    return Promise.all([
+      request(app)
+        .get("/api/articles/1/comments?limit=2")
+        .expect(200),
+      request(app)
+        .get("/api/articles/1/comments?limit=2&p=1")
+        .expect(200),
+      request(app)
+        .get("/api/articles/1/comments?limit=2&p=2")
+        .expect(200),
+    ]).then((data) => {
+      const comments = data.map((data) => data.body.comments).flat();
+      console.log(comments)
+      expect(comments.length).toBe(6);
+      expect(comments).toBeSortedBy("comment_id", { descending: false });
+    }); 
   });
   it("404: should return appropriately when given a non-existent article", () => {
     return request(app)

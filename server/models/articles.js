@@ -28,9 +28,9 @@ exports.fetchAll = (sort_by, order, limit, p, topic) => {
   return db.query(query).then((data) => data.rows);
 };
 
-exports.fetchCommentsByID = (id) => {
+exports.fetchCommentsByID = (id, p, limit) => {
   return db
-    .query(`SELECT * FROM comments WHERE article_id = $1`, [id])
+    .query(`SELECT * FROM comments WHERE article_id = $1 LIMIT $2 OFFSET $3`, [id, limit, p])
     .then((data) => data.rows);
 };
 
