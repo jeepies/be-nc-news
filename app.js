@@ -1,10 +1,12 @@
 const express = require("express");
+const cors = require("cors");
 
 const routers = require("./routers");
 const controllers = require("./server/controllers");
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/api", controllers.api.index);
